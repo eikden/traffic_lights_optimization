@@ -1,0 +1,28 @@
+# Sample four-way intersection layout representing a Malaysian urban crossroad.
+id: bukit_bintang_crossing
+phases:
+  - name: north_south_through
+    lanes: ["N_S", "S_N"]
+    min_green: 20
+    max_green: 60
+  - name: east_west_through
+    lanes: ["E_W", "W_E"]
+    min_green: 20
+    max_green: 60
+sensors:
+  cameras:
+    - id: cam_ns
+      lanes: ["N_S", "S_N"]
+      model_path: models/vehicle_detector.engine
+    - id: cam_ew
+      lanes: ["E_W", "W_E"]
+      model_path: models/vehicle_detector.engine
+  loop_detectors:
+    - id: loop_north
+      lane: "N_S"
+    - id: loop_south
+      lane: "S_N"
+    - id: loop_east
+      lane: "E_W"
+    - id: loop_west
+      lane: "W_E"
