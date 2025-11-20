@@ -3,8 +3,21 @@ from __future__ import annotations
 from pathlib import Path
 from typing import List, Sequence
 
-import yaml
-from pydantic import BaseModel, Field
+try:  # pragma: no cover - optional dependency when loading YAML
+    import yaml
+except ModuleNotFoundError:  # pragma: no cover - fallback when PyYAML is absent
+    yaml = None
+
+try:  # pragma: no cover - optional dependency in constrained environments
+    from pydantic import BaseModel, Field
+except ModuleNotFoundError:  # pragma: no cover - lightweight stub
+    class BaseModel:  # type: ignore
+        def __init__(self, **kwargs):
+            for key, value in kwargs.items():
+                setattr(self, key, value)
+
+    def Field(default=None, **_: object):  # type: ignore
+        return default
 
 
 class PhaseConfig(BaseModel):
@@ -43,6 +56,30 @@ class LayoutConfig(BaseModel):
 
 def load_layout(path: Path | str) -> LayoutConfig:
     file_path = Path(path)
+    if yaml is None:
+        raise ImportError("PyYAML is required to load layout files")
     with file_path.open("r", encoding="utf-8") as f:
         raw = yaml.safe_load(f)
     return LayoutConfig(**raw)
+
+
+class NetworkConfig(BaseModel):
+    id: str
+    intersections: List[LayoutConfig]
+    offsets: dict = Field(default_factory=dict)
+    corridor_lanes: List[str] = Field(default_factory=list)
+
+
+def load_network(path: Path | str) -> NetworkConfig:
+    file_path = Path(path)
+    if yaml is None:
+        raise ImportError("PyYAML is required to load network files")
+    with file_path.open("r", encoding="utf-8") as f:
+        raw = yaml.safe_load(f)
+    intersections = [LayoutConfig(**item) for item in raw.get("intersections", [])]
+    return NetworkConfig(
+        id=raw["id"],
+        intersections=intersections,
+        offsets=raw.get("offsets", {}),
+        corridor_lanes=raw.get("corridor_lanes", []),
+    )

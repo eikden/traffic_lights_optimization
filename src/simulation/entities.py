@@ -55,6 +55,14 @@ class IntersectionState:
     def current_phase(self) -> PhaseState:
         return self.phases[self.current_phase_index]
 
+    def set_phase(self, phase_name: str) -> None:
+        for idx, phase in enumerate(self.phases):
+            if phase.name == phase_name:
+                self.current_phase_index = idx
+                self.current_phase.reset()
+                return
+        raise ValueError(f"Phase {phase_name} not found in intersection {self.layout_id}")
+
     def switch_phase(self) -> None:
         self.current_phase_index = (self.current_phase_index + 1) % len(self.phases)
         self.current_phase.reset()
