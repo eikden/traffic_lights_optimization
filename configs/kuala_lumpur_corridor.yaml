@@ -1,0 +1,43 @@
+# Two-intersection corridor for synchronized control in Kuala Lumpur.
+id: bukit_bintang_corridor
+intersections:
+  - id: bukit_bintang_crossing
+    phases:
+      - name: north_south_through
+        lanes: ["N_S", "S_N"]
+        min_green: 20
+        max_green: 60
+      - name: east_west_through
+        lanes: ["E_W", "W_E"]
+        min_green: 20
+        max_green: 60
+    sensors:
+      cameras:
+        - id: cam_ns
+          lanes: ["N_S", "S_N"]
+          model_path: models/vehicle_detector.engine
+        - id: cam_ew
+          lanes: ["E_W", "W_E"]
+          model_path: models/vehicle_detector.engine
+  - id: jalan_imbi_crossing
+    phases:
+      - name: north_south_through
+        lanes: ["N_S", "S_N"]
+        min_green: 18
+        max_green: 50
+      - name: east_west_through
+        lanes: ["E_W", "W_E"]
+        min_green: 18
+        max_green: 50
+    sensors:
+      cameras:
+        - id: cam_ns_2
+          lanes: ["N_S", "S_N"]
+          model_path: models/vehicle_detector.engine
+        - id: cam_ew_2
+          lanes: ["E_W", "W_E"]
+          model_path: models/vehicle_detector.engine
+offsets:
+  bukit_bintang_crossing: 0
+  jalan_imbi_crossing: 20
+corridor_lanes: ["N_S", "S_N"]
